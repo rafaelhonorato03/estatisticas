@@ -1,6 +1,16 @@
 import pandas as pd
 import numpy as np
 
-df = pd.read_excel(r"C:\Users\tabat\Documents\GitHub\estatisticas\projecoes_2024_tab1_idade_simples.xlsx")
+numeros_aleatorios = np.random.randint(0, 100, 1000)
+print(numeros_aleatorios)
 
-print(df.head())
+valores, contagem = np.unique(numeros_aleatorios, return_counts=True)
+frequencia = pd.DataFrame({'Valores': valores, 'Contagem': contagem})
+frequencia['Frequencia Relativa'] = frequencia['Contagem'] / frequencia['Contagem'].sum()
+frequencia['Frequencia Acumulada'] = frequencia['Frequencia Relativa'].cumsum()
+frequencia['Frequencia Relativa (%)'] = (frequencia['Contagem'] / len(numeros_aleatorios)) * 100
+frequencia['Frequencia Acumulada (%)'] = frequencia['Frequencia Relativa (%)'].cumsum()
+
+print(frequencia)
+
+frequencia.to_excel(r'c:\Users\tabat\Documents\GitHub\estatisticas\frequencia.xlsx', index=False)
