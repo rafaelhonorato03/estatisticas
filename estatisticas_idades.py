@@ -6,31 +6,17 @@ df = pd.read_excel(r'C:\Users\tabat\Documents\GitHub\estatisticas\Tabela de Idad
 df = df.drop(df.index[-1])
 df = df.astype(float)
 
-print(df.head())
-
-#Calculo da amplitude de idades
+# Calculo da amplitude de idades
 amplitude_idade = df['Idade'].max() - df['Idade'].min()
-print(f'Amplitude de idades: {amplitude_idade}')
-
-#Calculo do número de classes utilizando a regra da raiz quadrada
-k = df['Idade'].count()
-k = int(k ** 0.5)
-print(f'Número de classes: {k}')
-
-#Calculo da amplitude de classes
+k = int(df['Idade'].count() ** 0.5)
 amplitude_classes = math.ceil(amplitude_idade / k)
-print(f'Amplitude de classes: {amplitude_classes}')
 
-# Somar a menor idade única com a amplitude de classe até atingir a idade máxima
+# Criar os limites das classes
 idade_minima = df['Idade'].min()
 idade_maxima = df['Idade'].max()
-
 limites_classes = [idade_minima]
 while limites_classes[-1] < idade_maxima:
-    proximo_limite = limites_classes[-1] + amplitude_classes
-    limites_classes.append(proximo_limite)
-
-print(f'Limites das classes: {limites_classes}')
+    limites_classes.append(limites_classes[-1] + amplitude_classes)
 
 # Criar as classes e calcular a frequência
 df['Classe'] = pd.cut(df['Idade'], bins=limites_classes, right=False)
@@ -45,6 +31,9 @@ frequencia_df = pd.DataFrame({
 
 # Calcular os pontos médios dos intervalos
 frequencia_df['Ponto Médio'] = (frequencia_df['Limite Inferior'] + frequencia_df['Limite Superior']) / 2
+
+# Calcular a frequência acumulada
+frequencia_df['Frequência Acumulada'] = frequencia_df['Frequência'].cumsum()
 
 print(frequencia_df)
 
@@ -77,6 +66,22 @@ plt.plot(
 plt.xlabel('Pontos Médios dos Intervalos')
 plt.ylabel('Frequência')
 plt.title('Polígono de Frequência')
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.tight_layout()
+plt.show()
+
+# Gráfico 3: Ogiva (Frequência Acumulada)
+plt.figure(figsize=(10, 6))
+plt.plot(
+    frequencia_df['Limite Superior'],
+    frequencia_df['Frequência Acumulada'],
+    marker='o',
+    color='green',
+    label='Ogiva'
+)
+plt.xlabel('Limites Superiores dos Intervalos')
+plt.ylabel('Frequência Acumulada')
+plt.title('Ogiva (Frequência Acumulada)')
 plt.grid(axis='y', linestyle='--', alpha=0.7)
 plt.tight_layout()
 plt.show()
