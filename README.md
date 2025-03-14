@@ -27,3 +27,5 @@ git clone https://github.com/seu-usuario/estatisticas.git
 cd estatisticas
 pip install pandas numpy openpyxl
 
+
+Data_set retirado do Kaggle: https://www.kaggle.com/datasets/ignacioazua/life-expectancy?resource=download
