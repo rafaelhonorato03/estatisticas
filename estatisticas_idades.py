@@ -19,3 +19,27 @@ print(f'Número de classes: {k}')
 #Calculo da amplitude de classes
 amplitude_classes = math.ceil(amplitude_idade / k)
 print(f'Amplitude de classes: {amplitude_classes}')
+
+# Somar a menor idade única com a amplitude de classe até atingir a idade máxima
+idade_minima = df['Idade'].min()
+idade_maxima = df['Idade'].max()
+
+limites_classes = [idade_minima]
+while limites_classes[-1] < idade_maxima:
+    proximo_limite = limites_classes[-1] + amplitude_classes
+    limites_classes.append(proximo_limite)
+
+print(f'Limites das classes: {limites_classes}')
+
+# Criar as classes e calcular a frequência
+df['Classe'] = pd.cut(df['Idade'], bins=limites_classes, right=False)
+frequencia = df.groupby('Classe')['Frequência'].sum()
+
+# Criar um DataFrame com os limites das classes e suas frequências
+frequencia_df = pd.DataFrame({
+    'Limite Inferior': [interval.left for interval in frequencia.index],
+    'Limite Superior': [interval.right for interval in frequencia.index],
+    'Frequência': frequencia.values
+})
+
+print(frequencia_df)
