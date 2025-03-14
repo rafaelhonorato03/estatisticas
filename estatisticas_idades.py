@@ -1,4 +1,5 @@
 import pandas as pd
+import math
 
 df = pd.read_excel(r'C:\Users\tabat\Documents\GitHub\estatisticas\Tabela de Idades.xlsx')
 df = df.drop(df.index[-1])
@@ -16,5 +17,5 @@ k = int(k ** 0.5)
 print(f'Número de classes: {k}')
 
 #Calculo da amplitude de classes
-amplitude_classes = amplitude_idade / k
+amplitude_classes = math.ceil(amplitude_idade / k)
 print(f'Amplitude de classes: {amplitude_classes}')
