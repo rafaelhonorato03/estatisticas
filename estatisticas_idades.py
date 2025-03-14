@@ -48,20 +48,25 @@ frequencia_df['Ponto Médio'] = (frequencia_df['Limite Inferior'] + frequencia_d
 
 print(frequencia_df)
 
-# Gerar o gráfico
+# Gráfico 1: Histograma
 plt.figure(figsize=(10, 6))
-
-# Histograma
 plt.bar(
     x=[f"[{row['Limite Inferior']}, {row['Limite Superior']})" for _, row in frequencia_df.iterrows()],
     height=frequencia_df['Frequência'],
     color='skyblue',
     edgecolor='black',
-    alpha=0.7,
-    label='Histograma'
+    alpha=0.7
 )
+plt.xlabel('Intervalos de Idade')
+plt.ylabel('Frequência')
+plt.title('Histograma de Frequências')
+plt.xticks(rotation=45)
+plt.grid(axis='y', linestyle='--', alpha=0.7)
+plt.tight_layout()
+plt.show()
 
-# Polígono de Frequência
+# Gráfico 2: Polígono de Frequência
+plt.figure(figsize=(10, 6))
 plt.plot(
     frequencia_df['Ponto Médio'],
     frequencia_df['Frequência'],
@@ -69,13 +74,9 @@ plt.plot(
     color='red',
     label='Polígono de Frequência'
 )
-
-# Configurações do gráfico
-plt.xlabel('Intervalos de Idade')
+plt.xlabel('Pontos Médios dos Intervalos')
 plt.ylabel('Frequência')
-plt.title('Histograma e Polígono de Frequência')
-plt.xticks(rotation=45)
+plt.title('Polígono de Frequência')
 plt.grid(axis='y', linestyle='--', alpha=0.7)
-plt.legend()
 plt.tight_layout()
 plt.show()
