@@ -24,7 +24,3 @@ print(df['Sum of Life Expectancy  (both sexes)'].min())
 print(f'Amplitude da expectativa de vida feminina: {amplitude_vida_feminina}')
 print(f'Amplitude da expectativa de vida masculina: {amplitude_vida_masculina}')   
 print(f'Amplitude da expectativa de vida geral: {amplitude_vida_geral}')
-
-# Calcular a soma da expectativa de vida quando a expectativa é maior que 100
-soma_expectativa_maior_100 = df[df['Sum of Life Expectancy  (both sexes)'] > 100]
-print(f'Soma da expectativa de vida quando a expectativa é maior que 100: {soma_expectativa_maior_100}')
