@@ -1,5 +1,6 @@
 import pandas as pd
 import math
+import matplotlib.pyplot as plt
 
 df = pd.read_excel(r'C:\Users\tabat\Documents\GitHub\estatisticas\Tabela de Idades.xlsx')
 df = df.drop(df.index[-1])
@@ -43,3 +44,17 @@ frequencia_df = pd.DataFrame({
 })
 
 print(frequencia_df)
+
+# Gerar o gráfico de histograma
+plt.bar(
+    x=[f"[{row['Limite Inferior']}, {row['Limite Superior']})" for _, row in frequencia_df.iterrows()],
+    height=frequencia_df['Frequência'],
+    color='skyblue',
+    edgecolor='black'
+)
+plt.xlabel('Intervalos de Idade')
+plt.ylabel('Frequência')
+plt.title('Histograma de Frequências')
+plt.xticks(rotation=45)
+plt.tight_layout()
+plt.show()
