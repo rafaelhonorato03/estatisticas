@@ -50,7 +50,15 @@ classes_df = pd.DataFrame({
     'Frequência': frequencia.values
 })
 
-print(classes_df)
+# Calcular os pontos médios dos intervalos
+classes_df['Ponto Médio'] = (classes_df['Limite Inferior'] + classes_df['Limite Superior']) / 2
+
+# Calcular a média ponderada
+numerador = (classes_df['Ponto Médio'] * classes_df['Frequência']).sum()
+denominador = classes_df['Frequência'].sum()
+media_ponderada = numerador / denominador
+
+print(f"Média Ponderada: {media_ponderada}")
 
 # Construir o histograma
 plt.figure(figsize=(10, 6))
