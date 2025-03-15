@@ -8,6 +8,10 @@ df = pd.read_excel(r"C:\Users\tabat\Documents\GitHub\estatisticas\Tempo de uso d
 # Exibir as primeiras linhas do DataFrame
 print(df.head())
 
+# Calcular tempo médio de uso de redes sociais
+media = df['Tempo em redes sociais'].mean()
+print(f"Tempo médio de uso de redes sociais: {media}")
+
 # Calcular a amplitude
 amplitude = df['Tempo em redes sociais'].max() - df['Tempo em redes sociais'].min()
 print(f"Amplitude: {amplitude}")
