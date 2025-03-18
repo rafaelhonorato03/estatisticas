@@ -12,6 +12,14 @@ print(df.head())
 media = df['Tempo em redes sociais'].mean()
 print(f"Tempo médio de uso de redes sociais: {media}")
 
+# Calcular a mediana de uso de redes sociciais
+mediana = df['Tempo em redes sociais'].median()
+print(f"Mediana de uso de redes sociais: {mediana}")
+
+# Calcular a moda de uso de redes sociais
+moda = df['Tempo em redes sociais'].mode()
+print(f"Moda de uso de redes sociais: {moda}")
+
 # Calcular a amplitude
 amplitude = df['Tempo em redes sociais'].max() - df['Tempo em redes sociais'].min()
 print(f"Amplitude: {amplitude}")
