@@ -20,6 +20,14 @@ print(f"Mediana de uso de redes sociais: {mediana}")
 moda = df['Tempo em redes sociais'].mode()
 print(f"Moda de uso de redes sociais: {moda}")
 
+# Calcular a variância de uso de redes sociais
+variancia = df['Tempo em redes sociais'].var()
+print(f"Variância de uso de redes sociais: {variancia}")
+
+# calcular o desvio padrão de uso de redes sociais
+desvio_padrao = df['Tempo em redes sociais'].std()
+print(f"Desvio padrão de uso de redes sociais: {desvio_padrao}")
+
 # Calcular a amplitude
 amplitude = df['Tempo em redes sociais'].max() - df['Tempo em redes sociais'].min()
 print(f"Amplitude: {amplitude}")
