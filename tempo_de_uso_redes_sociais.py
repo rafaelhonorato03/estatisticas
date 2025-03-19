@@ -28,6 +28,27 @@ print(f"Variância de uso de redes sociais: {variancia}")
 desvio_padrao = df['Tempo em redes sociais'].std()
 print(f"Desvio padrão de uso de redes sociais: {desvio_padrao}")
 
+# Calcular o coeficiente de variação
+coeficiente_variacao = (desvio_padrao / media) * 100
+print(f"Coeficiente de Variação: {coeficiente_variacao}")
+
+# Calculo para classificar o coeficiente de variação
+def classificacao_coeficiente_variacao(coeficiente):
+    if coeficiente <= 5:
+        classificacao = "Muito Baixa"
+    elif coeficiente <= 15:
+        classificacao = "Baixa"
+    elif coeficiente <= 30:
+        classificacao = "Média"
+    elif coeficiente <= 50:
+        classificacao = "Alta"
+    else:
+        classificacao = "Muito Alta"
+    return print(f"Classificação do coeficiente de variação: {classificacao}")
+
+# Classificar coeficiente de variação
+classificacao_coeficiente_variacao(coeficiente_variacao)
+
 # Calcular a amplitude
 amplitude = df['Tempo em redes sociais'].max() - df['Tempo em redes sociais'].min()
 print(f"Amplitude: {amplitude}")
@@ -84,6 +105,12 @@ desvio_padrao_ponderado = math.sqrt(variancia_ponderada)
 
 print(f"Variância Ponderada: {variancia_ponderada}")
 print(f"Desvio Padrão Ponderado: {desvio_padrao_ponderado}")
+
+# Calcular o coeficiente de variação ponderado
+coeficiente_variacao_ponderado = (desvio_padrao_ponderado / media_ponderada) * 100
+
+# Classificar coeficiente de variação
+classificacao_coeficiente_variacao(coeficiente_variacao_ponderado)
 
 # Construir o histograma
 plt.figure(figsize=(10, 6))
