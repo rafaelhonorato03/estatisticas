@@ -76,6 +76,15 @@ media_ponderada = numerador / denominador
 
 print(f"Média Ponderada: {media_ponderada}")
 
+# Calcular a variância ponderada
+variancia_ponderada = ((classes_df['Frequência'] * (classes_df['Ponto Médio'] - media_ponderada) ** 2).sum()) / classes_df['Frequência'].sum()
+
+# Calcular o desvio padrão
+desvio_padrao_ponderado = math.sqrt(variancia_ponderada)
+
+print(f"Variância Ponderada: {variancia_ponderada}")
+print(f"Desvio Padrão Ponderado: {desvio_padrao_ponderado}")
+
 # Construir o histograma
 plt.figure(figsize=(10, 6))
 plt.bar(
