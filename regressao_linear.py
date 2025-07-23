@@ -90,5 +90,15 @@ df_carros = pd.DataFrame(dados, columns=colunas)
 df.info()
 df.describe()
 
-stemgraphic.stem_graphic(df_carros['cap_vol'])
+stemgraphic.stem_graphic(df_carros['consumo'])
+plt.show()
+
+sns.set_theme()
+g = sns.lmplot(
+    data=df_carros,
+    x="consumo",
+    y="power",
+    hue="brand/model/year",
+    height=5
+)
 plt.show()
