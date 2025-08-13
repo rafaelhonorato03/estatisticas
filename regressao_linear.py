@@ -32,7 +32,6 @@ g.plot_joint(sns.scatterplot, color="b")
 
 # Adicione histogramas nas margens
 g.plot_marginals(sns.histplot, color="b", element="step")
-
 plt.show()
 
 
@@ -386,4 +385,13 @@ sns.stripplot(df_amostra_aco,
 ax.xaxis.grid(True)
 ax.set(ylabel="")
 sns.despine(trim=True, left=True)
+plt.show()
+
+sns.scatterplot(data=df_carros,
+                x='cap_vol', y='consumo')
+plt.show()
+
+g = sns.JointGrid(data=df_carros, x="cap_vol", y="consumo", marginal_ticks=True)
+g.plot_joint(sns.scatterplot)
+g.plot_marginals(sns.histplot)
 plt.show()
