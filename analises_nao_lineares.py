@@ -3,26 +3,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 import statsmodels.api as sm
+from mpl_toolkits.mplot3d import Axes3D
 
-# Dados originais
+# -------------------------
+# Dados originais simples (x,y)
+# -------------------------
 lstx2 = (100, 125, 125, 150, 150, 200, 200, 250, 250, 300, 300, 350, 400, 400)
 lsty2 = (150, 140, 180, 210, 190, 320, 280, 400, 430, 440, 390, 600, 610, 670)
 
-# Ajustar regressão linear (reta: y = ax + b)
 coef = np.polyfit(lstx2, lsty2, 1)
 a, b = coef
 print(f"Equação da reta ajustada: y = {a:.2f}x + {b:.2f}")
 
-# Predição
 y_pred = a * np.array(lstx2) + b
-
-# Resíduos
 resi = np.array(lsty2) - y_pred
-
-# Resíduos padronizados (z-score)
 standardized_residuals = (resi - np.mean(resi)) / np.std(resi)
 
-# Criar DataFrame completo
 df = pd.DataFrame({
     "x": lstx2,
     "y": lsty2,
@@ -31,38 +27,23 @@ df = pd.DataFrame({
     "standardized_residuals": standardized_residuals
 })
 
-# Correlação
-corr = df[["x", "y"]].corr().iloc[0,1]
-print(f'Correlação entre x e y: {corr:.4f}')
+print("\nCorrelação entre x e y:", df[["x","y"]].corr().iloc[0,1])
 
-# Gráfico de dispersão com reta de regressão
 plt.figure(figsize=(8,6))
 sns.scatterplot(x="x", y="y", data=df, label="Dados reais")
 sns.lineplot(x="x", y="y_pred", data=df, color="red", label="Regressão Linear")
 plt.title("Dispersão entre x e y com regressão linear")
-plt.xlabel("x")
-plt.ylabel("y")
 plt.legend()
 plt.show()
 
 plt.figure(figsize=(8,6))
 sns.heatmap(df.corr(), annot=True, cmap="coolwarm")
-plt.title("Mapa de calor da correlação")
+plt.title("Mapa de calor da correlação (x,y)")
 plt.show()
-
-# Estatísticas
-print("\n--- INFO ---")
-print(df.info())
-print("\n--- DESCRIBE ---")
-print(df.describe())
-print("\n--- HEAD ---")
-print(df.head())
-print("\n--- CORRELAÇÃO COMPLETA ---")
-print(df.corr())
 
 
 # -------------------------
-# Base de dados
+# Base de dados dos carros
 # -------------------------
 dados = [
     ["Gurgel BR800 0.8 1991", 792, 12, 33, 650, 34.4, 2, 0],
@@ -85,21 +66,19 @@ colunas = ["brand/model/year", "cap_vol", "consumo", "power", "weight", "cemm", 
 df_carros = pd.DataFrame(dados, columns=colunas)
 
 # -------------------------
-# Modelo de regressão linear
+# Regressão linear cap_vol -> consumo
 # -------------------------
 X = df_carros["cap_vol"]
 y = df_carros["consumo"]
-
-# Adicionando constante (intercepto)
 X_const = sm.add_constant(X)
-
-# Ajuste do modelo
 modelo = sm.OLS(y, X_const).fit()
 
-# Predições e resíduos
 df_carros["y_pred"] = modelo.predict(X_const)
 df_carros["residuals"] = y - df_carros["y_pred"]
 df_carros["std_resid"] = modelo.get_influence().resid_studentized_internal
+
+print("\nResumo do modelo:")
+print(modelo.summary())
 
 # -------------------------
 # VISUALIZAÇÕES
@@ -110,27 +89,27 @@ plt.figure(figsize=(8,6))
 sns.scatterplot(x="cap_vol", y="consumo", data=df_carros, s=80, label="Dados reais")
 sns.lineplot(x="cap_vol", y="y_pred", data=df_carros, color="red", label="Regressão Linear")
 plt.title("Dispersão com reta de regressão")
+plt.legend()
 plt.show()
 
 # 2. Resíduos vs valores ajustados
 plt.figure(figsize=(8,6))
 sns.scatterplot(x=df_carros["y_pred"], y=df_carros["residuals"])
 plt.axhline(0, color="red", linestyle="--")
+plt.title("Resíduos vs Valores Ajustados")
 plt.xlabel("Valores ajustados (ŷ)")
 plt.ylabel("Resíduos (e)")
-plt.title("Resíduos vs Valores Ajustados")
 plt.show()
 
 # 3. Resíduos padronizados
 plt.figure(figsize=(8,6))
 sns.scatterplot(x=df_carros["y_pred"], y=df_carros["std_resid"])
 plt.axhline(0, color="red", linestyle="--")
-plt.axhline(2, color="orange", linestyle="--", label="Limite superior")
-plt.axhline(-2, color="orange", linestyle="--", label="Limite inferior")
+plt.axhline(2, color="orange", linestyle="--")
+plt.axhline(-2, color="orange", linestyle="--")
+plt.title("Resíduos Padronizados")
 plt.xlabel("Valores ajustados (ŷ)")
 plt.ylabel("Resíduos padronizados (e*)")
-plt.title("Resíduos Padronizados vs Valores Ajustados")
-plt.legend()
 plt.show()
 
 # 4. Histograma dos resíduos
@@ -144,13 +123,13 @@ sm.qqplot(df_carros["residuals"], line='45')
 plt.title("QQ-Plot dos Resíduos")
 plt.show()
 
-# 6. Heatmap de correlação
+# 6. Heatmap de correlação (só colunas numéricas)
 plt.figure(figsize=(8,6))
-sns.heatmap(df_carros.corr(), annot=True, cmap="coolwarm", fmt=".2f")
+sns.heatmap(df_carros.select_dtypes(include=[np.number]).corr(), annot=True, cmap="coolwarm", fmt=".2f")
 plt.title("Mapa de Calor das Correlações")
 plt.show()
 
-# 7. Pairplot (relações entre todas as variáveis numéricas)
+# 7. Pairplot (multivariado)
 sns.pairplot(df_carros[["cap_vol", "consumo", "power", "weight", "cemm"]], diag_kind="kde")
 plt.suptitle("Relações Multivariadas", y=1.02)
 plt.show()
@@ -163,14 +142,29 @@ plt.xlabel("Consumo (km/L)")
 plt.ylabel("Modelo")
 plt.show()
 
-# 9. Gráfico de dispersão 3D (cap_vol, power, consumo)
-from mpl_toolkits.mplot3d import Axes3D
-
+# 9. Gráfico de dispersão 3D
 fig = plt.figure(figsize=(10,7))
 ax = fig.add_subplot(111, projection="3d")
-ax.scatter(df_carros["cap_vol"], df_carros["power"], df_carros["consumo"], c=df_carros["consumo"], cmap="viridis", s=80)
+ax.scatter(df_carros["cap_vol"], df_carros["power"], df_carros["consumo"], 
+           c=df_carros["consumo"], cmap="viridis", s=80)
 ax.set_xlabel("Capacidade Volumétrica")
 ax.set_ylabel("Potência (cv)")
 ax.set_zlabel("Consumo (km/L)")
 plt.title("Dispersão 3D: Cap_Vol x Potência x Consumo")
+plt.show()
+
+# Tempo de fritura de batata
+
+# dados
+fritura_batata = {
+    "tempo_fritura_min": [5, 10, 15, 20, 25, 30, 45, 60],
+    "teor_umidade_%": [16.3, 9.7, 8.1, 4.2, 3.4, 2.9, 1.9, 1.3]
+}
+
+# criar dataframe
+df_fritura = pd.DataFrame(fritura_batata)
+
+print(df_fritura)
+
+sns.stripplot(df_fritura, x = 'tempo_fritura_min', y = 'teor_umidade_%')
 plt.show()
