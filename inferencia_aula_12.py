@@ -1,78 +1,99 @@
-# -----------------------------
-# 1️⃣ Importar bibliotecas
-# -----------------------------
+# =========================================================
+# Regressão Polinomial com Statsmodels
+# Versão Melhorada, Corrigida e Generalizada
+# =========================================================
+
+# 1. Importação das bibliotecas
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import PolynomialFeatures
 import statsmodels.api as sm
+from sklearn.preprocessing import PolynomialFeatures
 
-# -----------------------------
-# 2️⃣ Criar os dados
-# -----------------------------
-# Velocidade do fluido (cm/s) e quantidade de gotículas (mg/m3)
-x_vals = np.array([7, 10.3, 13.7, 16.6, 19.8, 22])
-y_vals = np.array([479, 503, 487, 470, 458, 412])
+# 2. Configuração do estilo dos gráficos
+plt.style.use('seaborn-v0_8-whitegrid')
 
-# Transformar em DataFrame para manipulação fácil
-df = pd.DataFrame({'x': x_vals, 'y': y_vals})
+# 3. Dados experimentais
+velocidade = [7, 10.3, 13.7, 16.6, 19.8, 22]
+goticulas = [479, 503, 487, 470, 458, 412]
+df = pd.DataFrame({'Velocidade': velocidade, 'Gotículas': goticulas})
 
-# -----------------------------
-# 3️⃣ Regressão Linear
-# -----------------------------
-# Adicionar constante para o intercepto
-X_linear = sm.add_constant(df['x'])
-y = df['y']
+# =========================================================
+# Funções auxiliares
+# =========================================================
 
-# Ajustar modelo linear
-model_linear = sm.OLS(y, X_linear).fit()
-print("=== Regressão Linear ===")
-print(model_linear.summary())
+def ajustar_modelo(df, grau=2):
+    """Ajusta um modelo polinomial de grau definido."""
+    poly = PolynomialFeatures(degree=grau, include_bias=False)
+    X_poly = poly.fit_transform(df['Velocidade'].values.reshape(-1, 1))
+    X_poly = sm.add_constant(X_poly)  # adiciona intercepto
+    modelo = sm.OLS(df['Gotículas'], X_poly).fit()
+    return modelo, poly
 
-# Previsão
-y_pred_linear = model_linear.predict(X_linear)
+def prever(modelo, poly, valor, alpha=0.05):
+    """Retorna previsão e intervalo de confiança para um valor específico."""
+    # Gera features polinomiais
+    X_val = poly.transform(np.array([[valor]]))
+    # Adiciona constante para alinhar com o modelo
+    X_val = sm.add_constant(X_val, has_constant='add')
+    # Faz previsão com intervalo de confiança
+    pred = modelo.get_prediction(X_val).summary_frame(alpha=alpha)
+    return pred
 
-# -----------------------------
-# 4️⃣ Gráfico da Regressão Linear
-# -----------------------------
-plt.figure(figsize=(7,5))
-plt.scatter(df['x'], df['y'], color='m', label='Dados Reais')
-plt.plot(df['x'], y_pred_linear, color='b', label='Ajuste Linear')
-plt.xlabel('Velocidade do fluxo do fluido (cm/s)')
-plt.ylabel('Quantidade de gotículas de névoa (mg/m3)')
-plt.title('Regressão Linear')
-plt.legend()
-plt.show()
+def plotar_modelo(df, modelo, poly):
+    """Plota dados, curva ajustada e resíduos."""
+    # Curva ajustada
+    velocidade_pred = np.linspace(min(df['Velocidade']), max(df['Velocidade']), 200)
+    X_pred = sm.add_constant(poly.transform(velocidade_pred.reshape(-1, 1)))
+    y_pred = modelo.predict(X_pred)
 
-# -----------------------------
-# 5️⃣ Regressão Polinomial (grau 2)
-# -----------------------------
-poly = PolynomialFeatures(degree=2, include_bias=False)  # sem coluna de 1, pois já usamos add_constant
-X_poly = poly.fit_transform(df[['x']])
+    # Gráfico principal
+    plt.figure(figsize=(10, 6))
+    plt.scatter(df['Velocidade'], df['Gotículas'], color='black', s=80, label='Dados Observados')
+    plt.plot(velocidade_pred, y_pred, color='green', linewidth=3,
+             label=f'Modelo Polinomial (R²: {modelo.rsquared:.3f})')
+    plt.title('Relação entre Velocidade do Fluxo e Gotículas de Névoa')
+    plt.xlabel('Velocidade do Fluxo (cm/s)')
+    plt.ylabel('Quantidade de Gotículas (mg/m³)')
+    plt.legend()
+    plt.annotate(
+        'Curvatura ajusta bem os dados.',
+        xy=(17, 470), xytext=(18, 490),
+        arrowprops=dict(facecolor='green', shrink=0.05),
+        fontsize=12, color='green'
+    )
+    plt.show()
 
-# Adicionar constante manualmente
-X_poly = sm.add_constant(X_poly)
+    # Gráfico de resíduos
+    residuos = modelo.resid
+    plt.figure(figsize=(10, 4))
+    plt.scatter(df['Velocidade'], residuos, color='blue', s=70)
+    plt.axhline(0, color='red', linestyle='--')
+    plt.title('Resíduos do Modelo')
+    plt.xlabel('Velocidade do Fluxo (cm/s)')
+    plt.ylabel('Resíduo')
+    plt.show()
 
-# Ajustar modelo polinomial
-model_poly = sm.OLS(y, X_poly).fit()
-print("=== Regressão Polinomial (grau 2) ===")
-print(model_poly.summary())
+# =========================================================
+# Execução da análise
+# =========================================================
 
-# Previsão polinomial
-y_pred_poly = model_poly.predict(X_poly)
+# Ajuste do modelo
+grau = 2
+modelo, poly = ajustar_modelo(df, grau=grau)
 
-# -----------------------------
-# 6️⃣ Gráfico da Regressão Polinomial
-# -----------------------------
-plt.figure(figsize=(7,5))
-plt.scatter(df['x'], df['y'], color='m', label='Dados Reais')
-# Para curva suave, gerar valores de x densos
-x_smooth = np.linspace(df['x'].min(), df['x'].max(), 100)
-X_smooth_poly = sm.add_constant(poly.transform(x_smooth.reshape(-1,1)))
-y_smooth_poly = model_poly.predict(X_smooth_poly)
-plt.plot(x_smooth, y_smooth_poly, color='g', label='Ajuste Polinomial')
-plt.xlabel('Velocidade do fluxo do fluido (cm/s)')
-plt.ylabel('Quantidade de gotículas de névoa (mg/m3)')
-plt.title('Regressão Polinomial (grau 2)')
-plt.legend()
-plt.show()
+# Resumo estatístico
+print("\n### Resumo da Regressão Polinomial ###")
+print(modelo.summary())
+
+# Visualização
+plotar_modelo(df, modelo, poly)
+
+# Previsão para exemplo
+velocidade_exemplo = 13.7
+pred = prever(modelo, poly, velocidade_exemplo)
+
+print("\n--- Previsão de Exemplo ---")
+print(f"Velocidade: {velocidade_exemplo} cm/s")
+print(f"  Média Prevista: {pred['mean'][0]:.2f} mg/m³")
+print(f"  Intervalo de Confiança 95%: [{pred['mean_ci_lower'][0]:.2f}, {pred['mean_ci_upper'][0]:.2f}] mg/m³")
