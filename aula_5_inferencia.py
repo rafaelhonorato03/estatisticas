@@ -1,7 +1,4 @@
-# =========================================================
 # Regressão Polinomial com Statsmodels
-# Versão Melhorada, Corrigida e Generalizada
-# =========================================================
 
 # 1. Importação das bibliotecas
 import numpy as np
@@ -18,9 +15,7 @@ velocidade = [7, 10.3, 13.7, 16.6, 19.8, 22]
 goticulas = [479, 503, 487, 470, 458, 412]
 df = pd.DataFrame({'Velocidade': velocidade, 'Gotículas': goticulas})
 
-# =========================================================
 # Funções auxiliares
-# =========================================================
 
 def ajustar_modelo(df, grau=2):
     """Ajusta um modelo polinomial de grau definido."""
